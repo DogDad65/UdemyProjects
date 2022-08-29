@@ -1,51 +1,47 @@
-
-class Banking:
+class Bank:
 
     def __init__(self, initial_amount=0.00):
         self.balance = initial_amount
 
-    def transaction_log(self, transaction_string):
-        with open("transaction.txt", "a") as file:
-            file.write(f"{transaction_string} \t\t\tBalance: {self.balance}\n")
-
-    def withdraw(self, amount):
-        try:
-            amount = float(amount)
-        except ValueError:
-            amount = 0
-        if amount:
-            self.balance = self.balance - amount
-            self.transaction_log(f"Withdraw {amount}")
+    def withdrawal(self, transactionAmount):
+        if transactionAmount > self.balance:
+            print(f"The withdrawal amount of ${transactionAmount} exceeds your account balance of ${self.balance}. Transaction cancelled.")
+        else: 
+            self.balance = self.balance - transactionAmount
+            self.transaction_log(f"Withdrew: ${transactionAmount}")
     
-    def deposit(self, amount):
-        try:
-            amount = float(amount)
-        except ValueError:
-            amount = 0
-        if amount:
-            self.balance = self.balance + amount
-            self.transaction_log(f"Deposit {amount}")
+    def deposit(self, transactionAmount):
+        if transactionAmount:
+            self.balance = self.balance + transactionAmount
+            self.transaction_log(f"Depostied: ${transactionAmount}") 
 
+    def transaction_log(self, transaction_string):
+        with open('transactions.txt', 'a') as file:
+            file.write(f"{transaction_string}\t\t Account Balance: $ {self.balance}\n")
+            
+account = Bank(500.50)
 
-account = Banking(100.50)
 while True:
     try:
-        action = input("Good Day! What would you like to do? ")
+        transactionType = input("What type of transaction would you like to complete? deposit or withdrawal. ")
+        transactionType = transactionType.lower()
     except KeyboardInterrupt:
-        print("\nThank You! Have a great day!\n")
+        print("\nThank You! Have a great day!")
         break
-       
-    if action in ["withdraw", "deposit"]:
-        if action == "withdraw":
-            amount = input("What would you like to withdraw? ")
-            account.withdraw(amount)
+    
+    if transactionType in ["withdrawal", "deposit"]:
+        
+        transactionAmount = float(input(f"How much would you like to {transactionType}? $ "))
+        if transactionType == 'deposit':
+            newBalance = account.deposit(transactionAmount)
         else:
-            amount = input("How much would you like to deposit? ")
-            account.deposit(amount)
+            newBalance = account.withdrawal(transactionAmount)
 
-        print("Your current balance is ", account.balance)
+        initialBalance = newBalance
+        print("Your account balance is $", account.balance)
+
     else:
-        print("That is not a valid action. Please try again. ")
+        print("You have selected an invalid transaction type. Please try again.")
 
 
     
